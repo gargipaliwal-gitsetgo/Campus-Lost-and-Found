@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}Search Found Items | Campus Lost &amp; Found Portal{% endblock %}
+
+{% block content %}
+<!-- PAGE HEADER WITH BREADCRUMBS -->
+<header class="page-header">
+    <div class="page-header-container">
+        <div>
+            <div class="breadcrumbs">
+                <a href="{{ url_for('home') }}"><i class="fa-solid fa-house"></i> Home</a>
+                <i class="fa-solid fa-chevron-right"></i>
+                <span>Search Items</span>
+            </div>
+            <h1 class="page-title">
+                <i class="fa-solid fa-magnifying-glass" style="color: var(--primary-600);"></i>
+                Search Available Items
+            </h1>
+            <p class="page-subtitle">Browse through all verified items currently registered and available for ownership claims.</p>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+            <a href="{{ url_for('report_lost') }}" class="btn-secondary btn-sm">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span>Report Lost Item</span>
+            </a>
+            <a href="{{ url_for('submit_claim') }}" class="btn-primary btn-sm">
+                <i class="fa-solid fa-hand-holding-hand"></i>
+                <span>Submit Claim</span>
+            </a>
+        </div>
+    </div>
+</header>
+
+<div class="content-container">
+
+    <!-- SEARCH FILTER CARD -->
+    <div class="search-card-container">
+        <form method="GET" action="{{ url_for('search') }}" class="search-form">
+            <div class="search-input-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input 
+                    type="text" 
+                    name="search" 
+                    placeholder="Search by item name, category (e.g. Laptop, Bottle), or location (e.g. Library, Cafe)..." 
+                    value="{{ search_text }}"
+                    autocomplete="off"
+                >
+            </div>
+            <button type="submit" class="button search-submit-btn">
+                <i class="fa-solid fa-filter"></i>
+                <span>Filter Items</span>
+            </button>
+            {% if search_text %}
+            <a href="{{ url_for('search') }}" class="btn-secondary" title="Clear search query">
+                <i class="fa-solid fa-rotate-left"></i>
+                <span>Reset</span>
+            </a>
+            {% endif %}
+        </form>
+
+        <div class="search-status-bar">
+            <div>
+                {% if search_text %}
+                    Filtering registry for: <span class="search-query-tag">&ldquo;{{ search_text }}&rdquo;</span>
+                {% else %}
+                    <span>Displaying all cataloged items with <strong>AVAILABLE</strong> status.</span>
+                {% endif %}
+            </div>
+            <div>
+                <strong>{{ results|length }}</strong> record{{ 's' if results|length != 1 else '' }} found
+            </div>
+        </div>
+    </div>
+
+    <!-- RESULTS SECTION -->
+    {% if results %}
+    <div class="table-card">
+        <div class="table-header-bar">
+            <h2>
+                <i class="fa-solid fa-boxes-stacked" style="color: var(--primary-600);"></i>
+                <span>Recovered Property Catalog</span>
+            </h2>
+            <span class="table-count-badge">{{ results|length }} Available Item{{ 's' if results|length != 1 else '' }}</span>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item Details</th>
+                        <th>Category</th>
+                        <th>Color</th>
+                        <th>Location Found</th>
+                        <th>Found Date</th>
+                        <th>Found By</th>
+                        <th>Status</th>
+                        <th style="text-align: right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in results %}
+                    <tr>
+                        <!-- Item Name -->
+                        <td>
+                            <div class="cell-item-name">{{ item[1] }}</div>
+                            <div class="cell-meta">
+                                <span class="claim-id-tag">REF #{{ item[0] }}</span>
+                            </div>
+                        </td>
+
+                        <!-- Category -->
+                        <td>
+                            <span class="badge-category">
+                                <i class="fa-solid fa-tag"></i>
+                                {{ item[2] }}
+                            </span>
+                        </td>
+
+                        <!-- Color -->
+                        <td>
+                            {% if item[3] %}
+                                <span style="font-weight: 500;">{{ item[3] }}</span>
+                            {% else %}
+                                <span style="color: var(--slate-400); font-style: italic;">Not specified</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Location -->
+                        <td>
+                            <div class="cell-meta">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span>{{ item[4] }}</span>
+                            </div>
+                        </td>
+
+                        <!-- Found Date -->
+                        <td>
+                            <div class="cell-meta">
+                                <i class="fa-solid fa-calendar-day"></i>
+                                <span>{{ item[5] }}</span>
+                            </div>
+                        </td>
+
+                        <!-- Found By (Student) -->
+                        <td>
+                            <div class="cell-meta">
+                                <i class="fa-solid fa-user-graduate"></i>
+                                <span>{{ item[6] }}</span>
+                            </div>
+                        </td>
+
+                        <!-- Status -->
+                        <td>
+                            <span class="badge-status available">{{ item[7] }}</span>
+                        </td>
+
+                        <!-- Action -->
+                        <td style="text-align: right;">
+                            <a href="{{ url_for('submit_claim') }}" class="btn-primary btn-sm" title="Claim this property">
+                                <i class="fa-solid fa-hand-holding-hand"></i>
+                                <span>Claim</span>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% elif search_text %}
+    <!-- EMPTY STATE FOR SEARCH WITH NO RESULTS -->
+    <div class="empty-state">
+        <div class="empty-icon-wrap">
+            <i class="fa-solid fa-magnifying-glass-chart"></i>
+        </div>
+        <h2 class="empty-title">No Matching Property Found</h2>
+        <p class="empty-desc">
+            We couldn't find any available items matching &ldquo;<strong>{{ search_text }}</strong>&rdquo;. Try searching with broader keywords, checking different campus locations, or filing a Lost Report.
+        </p>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+            <a href="{{ url_for('search') }}" class="btn-secondary">
+                <i class="fa-solid fa-rotate-left"></i>
+                <span>Show All Available Items</span>
+            </a>
+            <a href="{{ url_for('report_lost') }}" class="button">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span>File a Lost Property Report</span>
+            </a>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- EMPTY STATE WHEN DATABASE HAS NO ITEMS -->
+    <div class="empty-state">
+        <div class="empty-icon-wrap">
+            <i class="fa-solid fa-box-open"></i>
+        </div>
+        <h2 class="empty-title">No Items Currently Cataloged</h2>
+        <p class="empty-desc">
+            All recovered items have either been claimed or there are no new items logged yet. If you have misplaced an item, please log a report.
+        </p>
+        <a href="{{ url_for('report_lost') }}" class="button">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span>File a Lost Property Report</span>
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- HORIZONTAL PAGE FLIPPER BAR -->
+    <div class="page-flipper-bar">
+        <a href="{{ url_for('report_found') }}" class="flipper-link">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>&larr; Report Found Item</span>
+        </a>
+        <a href="{{ url_for('submit_claim') }}" class="flipper-link flipper-next">
+            <span>Submit Ownership Claim &rarr;</span>
+            <i class="fa-solid fa-arrow-right"></i>
+        </a>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+        if (e.key === 'ArrowLeft') window.location.href = "{{ url_for('report_found') }}";
+        if (e.key === 'ArrowRight') window.location.href = "{{ url_for('submit_claim') }}";
+    });
+</script>
+{% endblock %}

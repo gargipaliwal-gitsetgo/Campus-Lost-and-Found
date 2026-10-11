@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}Report Found Item | Campus Lost &amp; Found Portal{% endblock %}
+
+{% block content %}
+<!-- PAGE HEADER WITH BREADCRUMBS -->
+<header class="page-header">
+    <div class="page-header-container">
+        <div>
+            <div class="breadcrumbs">
+                <a href="{{ url_for('home') }}"><i class="fa-solid fa-house"></i> Home</a>
+                <i class="fa-solid fa-chevron-right"></i>
+                <span>Report Found Item</span>
+            </div>
+            <h1 class="page-title">
+                <i class="fa-solid fa-box-archive" style="color: var(--success-600);"></i>
+                Report Found Property
+            </h1>
+            <p class="page-subtitle">Register a recovered belonging so it can be safely reunited with its student or faculty owner.</p>
+        </div>
+        <a href="{{ url_for('home') }}" class="btn-secondary btn-sm">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Back to Dashboard</span>
+        </a>
+    </div>
+</header>
+
+<div class="content-container">
+    <div class="form-wrapper">
+
+        <!-- Informational Banner -->
+        <div class="info-notice notice-success">
+            <i class="fa-solid fa-heart"></i>
+            <div>
+                <strong>Thank you for your honesty!</strong>
+                After submitting this report, please hand over the physical property to the Central Campus Security Desk or the respective building reception for secure safekeeping.
+            </div>
+        </div>
+
+        <!-- FORM CARD -->
+        <div class="form-card">
+            <form method="POST" action="{{ url_for('report_found') }}">
+
+                <div class="form-grid">
+
+                    <!-- Item Name -->
+                    <div class="form-group full-width">
+                        <label class="form-label" for="item_name">
+                            Item Name <span class="required-star">*</span>
+                        </label>
+                        <div class="input-container">
+                            <i class="fa-solid fa-tag input-icon"></i>
+                            <input 
+                                type="text" 
+                                id="item_name"
+                                name="item_name" 
+                                class="form-input"
+                                placeholder="e.g. Casio fx-991EX Calculator, Black Umbrella, Blue HydroFlask" 
+                                required
+                            >
+                        </div>
+                        <span class="form-helper-text">State what the item is in clear terms.</span>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="form-group">
+                        <label class="form-label" for="category_id">
+                            Item Category <span class="required-star">*</span>
+                        </label>
+                        <div class="input-container">
+                            <i class="fa-solid fa-layer-group input-icon"></i>
+                            <select id="category_id" name="category_id" class="form-select" required>
+                                <option value="">Select Category</option>
+                                {% for category in categories %}
+                                    <option value="{{ category[0] }}">{{ category[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Color -->
+                    <div class="form-group">
+                        <label class="form-label" for="color">
+                            Primary Color
+                        </label>
+                        <div class="input-container">
+                            <i class="fa-solid fa-palette input-icon"></i>
+                            <input 
+                                type="text" 
+                                id="color"
+                                name="color" 
+                                class="form-input"
+                                placeholder="e.g. Silver, Matte Black, Red"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Found By (Student) -->
+                    <div class="form-group">
+                        <label class="form-label" for="student_id">
+                            Found By (Student) <span class="required-star">*</span>
+                        </label>
+                        <div class="input-container">
+                            <i class="fa-solid fa-user-check input-icon"></i>
+                            <select id="student_id" name="student_id" class="form-select" required>
+                                <option value="">Select Finder Profile</option>
+                                {% for student in students %}
+                                    <option value="{{ student[0] }}">{{ student[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Location Found -->
+                    <div class="form-group">
+                        <label class="form-label" for="location_id">
+                            Location Where Found <span class="required-star">*</span>
+                        </label>
+                        <div class="input-container">
+                            <i class="fa-solid fa-location-dot input-icon"></i>
+                            <select id="location_id" name="location_id" class="form-select" required>
+                                <option value="">Select Discovery Location</option>
+                                {% for location in locations %}
+                                    <option value="{{ location[0] }}">{{ location[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Found Date -->
+                    <div class="form-group full-width">
+                        <label class="form-label" for="found_date">
+                            Date Discovered <span class="required-star">*</span>
+                        </label>
+                        <div class="input-container">
+                            <i class="fa-solid fa-calendar-days input-icon"></i>
+                            <input 
+                                type="date" 
+                                id="found_date"
+                                name="found_date" 
+                                class="form-input"
+                                value="{{ today }}" 
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-group full-width">
+                        <label class="form-label" for="description">
+                            Description &amp; Condition Details <span class="required-star">*</span>
+                        </label>
+                        <textarea 
+                            id="description"
+                            name="description" 
+                            class="form-textarea"
+                            placeholder="State exact spot (e.g. 2nd floor study cubicle #14), visible markings, or condition..." 
+                            required
+                        ></textarea>
+                        <span class="form-helper-text">Avoid publishing sensitive personal PINs or security lock codes.</span>
+                    </div>
+
+                </div>
+
+                <!-- Form Action Buttons -->
+                <div class="form-actions">
+                    <a href="{{ url_for('home') }}" class="btn-secondary">
+                        <i class="fa-solid fa-xmark"></i>
+                        <span>Cancel</span>
+                    </a>
+                    <button type="submit" class="button btn-success">
+                        <i class="fa-solid fa-hand-holding-heart"></i>
+                        <span>Submit Found Report</span>
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- HORIZONTAL PAGE FLIPPER BAR -->
+        <div class="page-flipper-bar">
+            <a href="{{ url_for('report_lost') }}" class="flipper-link">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>&larr; Report Lost Item</span>
+            </a>
+            <a href="{{ url_for('search') }}" class="flipper-link flipper-next">
+                <span>Search Found Registry &rarr;</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+        if (e.key === 'ArrowLeft') window.location.href = "{{ url_for('report_lost') }}";
+        if (e.key === 'ArrowRight') window.location.href = "{{ url_for('search') }}";
+    });
+</script>
+{% endblock %}

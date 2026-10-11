@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Verification Portal | Campus Lost &amp; Found{% endblock %}
+
+{% block content %}
+<!-- PAGE HEADER WITH BREADCRUMBS -->
+<header class="page-header">
+    <div class="page-header-container">
+        <div>
+            <div class="breadcrumbs">
+                <a href="{{ url_for('home') }}"><i class="fa-solid fa-house"></i> Home</a>
+                <i class="fa-solid fa-chevron-right"></i>
+                <span>Admin Verification</span>
+            </div>
+            <h1 class="page-title">
+                <i class="fa-solid fa-user-shield" style="color: var(--slate-900);"></i>
+                Claim Verification Portal
+            </h1>
+            <p class="page-subtitle">Security administration console for reviewing, cross-verifying, and approving student property claims.</p>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+            <a href="{{ url_for('home') }}" class="btn-secondary btn-sm">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{{ url_for('search') }}" class="btn-secondary btn-sm">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>Found Registry</span>
+            </a>
+        </div>
+    </div>
+</header>
+
+<div class="content-container">
+
+    <!-- CLAIMS TABLE CONTAINER -->
+    {% if claims %}
+    <div class="table-card">
+        <div class="table-header-bar">
+            <h2>
+                <i class="fa-solid fa-clipboard-list" style="color: var(--primary-600);"></i>
+                <span>Submitted Claim Requests</span>
+            </h2>
+            <span class="table-count-badge">Total: {{ claims|length }} Record{{ 's' if claims|length != 1 else '' }}</span>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Claim ID</th>
+                        <th>Item Details</th>
+                        <th>Claimant</th>
+                        <th>Claim Date</th>
+                        <th>Recovery Location</th>
+                        <th>Status</th>
+                        <th style="text-align: right; min-width: 180px;">Verification Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for claim in claims %}
+                    <tr>
+                        <!-- Claim ID -->
+                        <td>
+                            <span class="claim-id-tag">#CLM-{{ "%04d"|format(claim[0]) if claim[0] is number else claim[0] }}</span>
+                        </td>
+
+                        <!-- Item Name & Found ID Ref -->
+                        <td>
+                            <div class="cell-item-name">{{ claim[1] }}</div>
+                            <div class="cell-meta">
+                                <i class="fa-solid fa-box-archive"></i>
+                                <span>Found Ref #{{ claim[5] }}</span>
+                            </div>
+                        </td>
+
+                        <!-- Claimant (Student) -->
+                        <td>
+                            <div class="cell-meta" style="font-weight: 600; color: var(--text-heading);">
+                                <i class="fa-solid fa-user-graduate" style="color: var(--primary-400);"></i>
+                                <span>{{ claim[2] }}</span>
+                            </div>
+                        </td>
+
+                        <!-- Claim Date -->
+                        <td>
+                            <div class="cell-meta">
+                                <i class="fa-solid fa-calendar-day"></i>
+                                <span>{{ claim[3] }}</span>
+                            </div>
+                        </td>
+
+                        <!-- Location Found -->
+                        <td>
+                            <div class="cell-meta">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span>{{ claim[6] }}</span>
+                            </div>
+                        </td>
+
+                        <!-- Status Badge -->
+                        <td>
+                            {% if claim[4] == "PENDING" %}
+                                <span class="badge-status pending">Pending</span>
+                            {% elif claim[4] == "APPROVED" %}
+                                <span class="badge-status approved">Approved</span>
+                            {% elif claim[4] == "REJECTED" %}
+                                <span class="badge-status rejected">Rejected</span>
+                            {% else %}
+                                <span class="badge-status returned">{{ claim[4] }}</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Verification Actions -->
+                        <td style="text-align: right;">
+                            {% if claim[4] == "PENDING" %}
+                            <div class="admin-actions" style="justify-content: flex-end;">
+                                <!-- Approve Form -->
+                                <form method="POST" action="{{ url_for('admin') }}" style="display: inline;">
+                                    <input type="hidden" name="claim_id" value="{{ claim[0] }}">
+                                    <input type="hidden" name="decision" value="APPROVED">
+                                    <button 
+                                        type="submit" 
+                                        class="btn-success btn-sm"
+                                        title="Approve this claim"
+                                        onclick="return confirm('Confirm APPROVAL for Claim #{{ claim[0] }} ({{ claim[1] }}) by {{ claim[2] }}? This will mark the item as RETURNED.');"
+                                    >
+                                        <i class="fa-solid fa-check"></i>
+                                        <span>Approve</span>
+                                    </button>
+                                </form>
+
+                                <!-- Reject Form -->
+                                <form method="POST" action="{{ url_for('admin') }}" style="display: inline;">
+                                    <input type="hidden" name="claim_id" value="{{ claim[0] }}">
+                                    <input type="hidden" name="decision" value="REJECTED">
+                                    <button 
+                                        type="submit" 
+                                        class="btn-danger btn-sm"
+                                        title="Reject this claim"
+                                        onclick="return confirm('Confirm REJECTION for Claim #{{ claim[0] }} ({{ claim[1] }}) by {{ claim[2] }}?');"
+                                    >
+                                        <i class="fa-solid fa-xmark"></i>
+                                        <span>Reject</span>
+                                    </button>
+                                </form>
+                            </div>
+                            {% else %}
+                                {% if claim[4] == "APPROVED" %}
+                                    <span style="font-size: 0.82rem; font-weight: 700; color: var(--success-700); display: inline-flex; align-items: center; gap: 0.35rem;">
+                                        <i class="fa-solid fa-circle-check"></i> Item Handed Over
+                                    </span>
+                                {% elif claim[4] == "REJECTED" %}
+                                    <span style="font-size: 0.82rem; font-weight: 700; color: var(--danger-600); display: inline-flex; align-items: center; gap: 0.35rem;">
+                                        <i class="fa-solid fa-circle-xmark"></i> Claim Denied
+                                    </span>
+                                {% else %}
+                                    <span style="font-size: 0.82rem; color: var(--slate-500); font-weight: 600;">
+                                        Verified
+                                    </span>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- EMPTY STATE IF NO CLAIMS -->
+    <div class="empty-state">
+        <div class="empty-icon-wrap">
+            <i class="fa-solid fa-clipboard-check"></i>
+        </div>
+        <h2 class="empty-title">No Claims Pending Verification</h2>
+        <p class="empty-desc">
+            There are currently no claims filed by students. When students submit ownership claims for recovered items, they will appear here for review and authorization.
+        </p>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+            <a href="{{ url_for('home') }}" class="button">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Return to Dashboard</span>
+            </a>
+            <a href="{{ url_for('search') }}" class="btn-secondary">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>View Found Items</span>
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- HORIZONTAL PAGE FLIPPER BAR -->
+    <div class="page-flipper-bar">
+        <a href="{{ url_for('submit_claim') }}" class="flipper-link">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>&larr; Submit Claim</span>
+        </a>
+        <a href="{{ url_for('home') }}" class="flipper-link flipper-next">
+            <span>Overview Dashboard &rarr;</span>
+            <i class="fa-solid fa-arrow-right"></i>
+        </a>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+        if (e.key === 'ArrowLeft') window.location.href = "{{ url_for('submit_claim') }}";
+        if (e.key === 'ArrowRight') window.location.href = "{{ url_for('home') }}";
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}Campus Lost &amp; Found Management System{% endblock %}</title>
+
+    <!-- Theme Initializer (Defaults to Dark Theme) -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('campus_theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Custom Design System Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block head_extra %}{% endblock %}
+</head>
+<body>
+
+    <!-- TOP NAVIGATION BAR -->
+    <nav class="navbar" id="mainNavbar">
+        <div class="nav-container">
+            <a href="{{ url_for('home') }}" class="brand-identity">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-building-columns"></i>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-title">Campus Lost &amp; Found</span>
+                    <span class="brand-subtitle">University Property Registry</span>
+                </div>
+            </a>
+
+            <!-- Mobile Hamburger Toggle -->
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle Navigation Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <!-- Nav Links -->
+            <div class="nav-menu" id="navMenu">
+                <ul class="nav-list">
+                    <li>
+                        <a href="{{ url_for('home') }}" class="nav-link {% if request.endpoint == 'home' %}active{% endif %}">
+                            <i class="fa-solid fa-chart-pie"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('report_lost') }}" class="nav-link {% if request.endpoint == 'report_lost' %}active{% endif %}">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            <span>Report Lost</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('report_found') }}" class="nav-link {% if request.endpoint == 'report_found' %}active{% endif %}">
+                            <i class="fa-solid fa-box-archive"></i>
+                            <span>Report Found</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('search') }}" class="nav-link {% if request.endpoint == 'search' %}active{% endif %}">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <span>Search Items</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('submit_claim') }}" class="nav-link {% if request.endpoint == 'submit_claim' %}active{% endif %}">
+                            <i class="fa-solid fa-hand-holding-hand"></i>
+                            <span>Submit Claim</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('admin') }}" class="nav-link nav-admin-btn {% if request.endpoint == 'admin' %}active{% endif %}">
+                            <i class="fa-solid fa-user-shield"></i>
+                            <span>Admin Portal</span>
+                        </a>
+                    </li>
+                    <!-- Theme Toggle Switcher -->
+                    <li>
+                        <button class="theme-toggle-btn" id="themeToggle" title="Toggle Theme (Dark / Light)" aria-label="Toggle Theme">
+                            <i class="fa-solid fa-sun" id="themeIcon"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT INJECTION POINT -->
+    <main class="page-body">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    {% block footer %}
+    <footer class="app-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    <span>Campus Lost &amp; Found Portal</span>
+                </div>
+                <p class="footer-description">
+                    The official campus lost property recovery and tracking platform. Designed to connect students with their misplaced belongings safely and transparently.
+                </p>
+                <div class="footer-status-pill">
+                    <span class="status-indicator-dot"></span>
+                    <span>Database Engine Active • Verified Campus Network</span>
+                </div>
+            </div>
+
+            <div class="footer-links-group">
+                <h4 class="footer-heading">Quick Navigation</h4>
+                <ul class="footer-links">
+                    <li><a href="{{ url_for('home') }}"><i class="fa-solid fa-chevron-right"></i> Overview Dashboard</a></li>
+                    <li><a href="{{ url_for('search') }}"><i class="fa-solid fa-chevron-right"></i> Search Found Registry</a></li>
+                    <li><a href="{{ url_for('report_lost') }}"><i class="fa-solid fa-chevron-right"></i> File Lost Property Report</a></li>
+                    <li><a href="{{ url_for('report_found') }}"><i class="fa-solid fa-chevron-right"></i> Hand in Found Item</a></li>
+                    <li><a href="{{ url_for('submit_claim') }}"><i class="fa-solid fa-chevron-right"></i> Request Ownership Claim</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact">
+                <h4 class="footer-heading">Campus Help Desk</h4>
+                <div class="contact-entry">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <div>
+                        <strong>Central Property Office</strong>
+                        <span>Ground Floor, Student Services Center</span>
+                    </div>
+                </div>
+                <div class="contact-entry">
+                    <i class="fa-solid fa-clock"></i>
+                    <div>
+                        <strong>Operating Hours</strong>
+                        <span>Mon – Fri: 08:30 AM – 05:30 PM</span>
+                    </div>
+                </div>
+                <div class="contact-entry">
+                    <i class="fa-solid fa-phone"></i>
+                    <div>
+                        <strong>Campus Security Desk</strong>
+                        <span>Ext. 2400 / (555) 019-8234</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="footer-bottom-container">
+                <p>&copy; 2026 Campus Lost &amp; Found Management System. All rights reserved.</p>
+                <p class="footer-credits">Department of Campus Safety &amp; Student Affairs</p>
+            </div>
+        </div>
+    </footer>
+    {% endblock %}
+
+    <!-- SHARED SCRIPT FOR UI ENHANCEMENTS -->
+    <script>
+        // Mobile navigation toggle
+        const navToggle = document.getElementById('navToggle');
+        const navMenu = document.getElementById('navMenu');
+
+        if (navToggle && navMenu) {
+            navToggle.addEventListener('click', function() {
+                navMenu.classList.toggle('is-open');
+                const isOpen = navMenu.classList.contains('is-open');
+                navToggle.setAttribute('aria-expanded', isOpen);
+                navToggle.innerHTML = isOpen ? '<i class="fa-solid fa-xmark"></i>' : '<i class="fa-solid fa-bars"></i>';
+            });
+        }
+
+        // Theme Toggle Handling
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+
+        function updateThemeIcon(theme) {
+            if (!themeIcon) return;
+            if (theme === 'dark') {
+                themeIcon.className = 'fa-solid fa-sun';
+                themeToggle.setAttribute('title', 'Switch to Light Theme');
+            } else {
+                themeIcon.className = 'fa-solid fa-moon';
+                themeToggle.setAttribute('title', 'Switch to Dark Theme');
+            }
+        }
+
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+        updateThemeIcon(currentTheme);
+
+        if (themeToggle) {
+            themeToggle.addEventListener('click', function() {
+                const activeTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+                const nextTheme = activeTheme === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', nextTheme);
+                localStorage.setItem('campus_theme', nextTheme);
+                updateThemeIcon(nextTheme);
+            });
+        }
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

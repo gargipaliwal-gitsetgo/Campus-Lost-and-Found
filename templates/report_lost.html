@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}Report Lost Item | Campus Lost &amp; Found Portal{% endblock %}
+
+{% block content %}
+<!-- PAGE HEADER WITH BREADCRUMBS -->
+<header class="page-header">
+    <div class="page-header-container">
+        <div>
+            <div class="breadcrumbs">
+                <a href="{{ url_for('home') }}"><i class="fa-solid fa-house"></i> Home</a>
+                <i class="fa-solid fa-chevron-right"></i>
+                <span>Report Lost Item</span>
+            </div>
+            <h1 class="page-title">
+                <i class="fa-solid fa-circle-exclamation" style="color: var(--danger-600);"></i>
+                Report Lost Property
+            </h1>
+            <p class="page-subtitle">Submit the particulars of your misplaced item into the central campus property registry.</p>
+        </div>
+        <a href="{{ url_for('home') }}" class="btn-secondary btn-sm">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Back to Dashboard</span>
+        </a>
+    </div>
+</header>
+
+<div class="content-container">
+    <div class="form-wrapper">
+
+        <!-- Informational Banner -->
+        <div class="info-notice">
+            <i class="fa-solid fa-circle-info"></i>
+            <div>
+                <strong>Helpful Reporting Tip:</strong>
+                Include distinctive attributes (e.g. brand, stickers, serial numbers, case type). Once filed, campus security and staff will match your report against recovered items.
+            </div>
+        </div>
+
+        <!-- FORM CARD -->
+        <div class="form-card">
+            <form method="POST" action="{{ url_for('report_lost') }}">
+
+                <div class="form-grid">
+
+                    <!-- Item Name -->
+                    <div class="form-group full-width">
+                        <label class="form-label" for="item_name">
+                            Item Name <span class="required-star">*</span>
+                        </label>
+                        <div class="input-container">
+                            <i class="fa-solid fa-tag input-icon"></i>
+                            <input 
+                                type="text" 
+                                id="item_name"
+                                name="item_name" 
+                                class="form-input"
+                                placeholder="e.g. MacBook Air 13-inch, Blue Water Bottle, Titan Watch" 
+                                required
+                            >
+                        </div>
+                        <span class="form-helper-text">Provide a concise, recognizable title for the item.</span>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="form-group">
+                        <label class="form-label" for="category_id">
+                            Item Category <span class="required-star">*</span>
+                        </label>
+                        <div class="input-container">
+                            <i class="fa-solid fa-layer-group input-icon"></i>
+                            <select id="category_id" name="category_id" class="form-select" required>
+                                <option value="">Select Category</option>
+                                {% for category in categories %}
+                                    <option value="{{ category[0] }}">{{ category[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Color -->
+                    <div class="form-group">
+                        <label class="form-label" for="color">
+                            Primary Color
+                        </label>
+                        <div class="input-container">
+                            <i class="fa-solid fa-palette input-icon"></i>
+                            <input 
+                                type="text" 
+                                id="color"
+                                name="color" 
+                                class="form-input"
+                                placeholder="e.g. Matte Black, Navy Blue, Silver"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Student (Who lost it) -->
+                    <div class="form-group">
+                        <label class="form-label" for="student_id">
+                            Student Name <span class="required-star">*</span>
+                        </label>
+                        <div class="input-container">
+                            <i class="fa-solid fa-user-graduate input-icon"></i>
+                            <select id="student_id" name="student_id" class="form-select" required>
+                                <option value="">Select Student Profile</option>
+                                {% for student in students %}
+                                    <option value="{{ student[0] }}">{{ student[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="form-group">
+                        <label class="form-label" for="location_id">
+                            Last Seen Location <span class="required-star">*</span>
+                        </label>
+                        <div class="input-container">
+                            <i class="fa-solid fa-location-dot input-icon"></i>
+                            <select id="location_id" name="location_id" class="form-select" required>
+                                <option value="">Select Campus Location</option>
+                                {% for location in locations %}
+                                    <option value="{{ location[0] }}">{{ location[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Lost Date -->
+                    <div class="form-group full-width">
+                        <label class="form-label" for="lost_date">
+                            Approximate Date Lost <span class="required-star">*</span>
+                        </label>
+                        <div class="input-container">
+                            <i class="fa-solid fa-calendar-days input-icon"></i>
+                            <input 
+                                type="date" 
+                                id="lost_date"
+                                name="lost_date" 
+                                class="form-input"
+                                value="{{ today }}" 
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Detailed Description -->
+                    <div class="form-group full-width">
+                        <label class="form-label" for="description">
+                            Detailed Description <span class="required-star">*</span>
+                        </label>
+                        <textarea 
+                            id="description"
+                            name="description" 
+                            class="form-textarea"
+                            placeholder="Describe any identifiable details such as scratches, brand logos, case color, keychain ornaments, or contents..." 
+                            required
+                        ></textarea>
+                        <span class="form-helper-text">Specific details help verify ownership during security cross-checks.</span>
+                    </div>
+
+                </div>
+
+                <!-- Form Action Buttons -->
+                <div class="form-actions">
+                    <a href="{{ url_for('home') }}" class="btn-secondary">
+                        <i class="fa-solid fa-xmark"></i>
+                        <span>Cancel</span>
+                    </a>
+                    <button type="submit" class="button">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Submit Lost Report</span>
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- HORIZONTAL PAGE FLIPPER BAR -->
+        <div class="page-flipper-bar">
+            <a href="{{ url_for('home') }}" class="flipper-link">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>&larr; Overview Dashboard</span>
+            </a>
+            <a href="{{ url_for('report_found') }}" class="flipper-link flipper-next">
+                <span>Report Found Item &rarr;</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+        if (e.key === 'ArrowLeft') window.location.href = "{{ url_for('home') }}";
+        if (e.key === 'ArrowRight') window.location.href = "{{ url_for('report_found') }}";
+    });
+</script>
+{% endblock %}

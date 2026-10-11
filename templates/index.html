@@ -1,0 +1,455 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Campus Lost &amp; Found Portal{% endblock %}
+
+{% block content %}
+<!-- HORIZONTAL FULLSCREEN SLIDER CONTAINER -->
+<div class="horizontal-slider-container">
+
+    <!-- FLOATING PREV / NEXT SLIDE ARROWS -->
+    <button class="slider-arrow arrow-left" id="sliderPrev" aria-label="Previous Slide">
+        <i class="fa-solid fa-chevron-left"></i>
+    </button>
+    <button class="slider-arrow arrow-right" id="sliderNext" aria-label="Next Slide">
+        <i class="fa-solid fa-chevron-right"></i>
+    </button>
+
+    <!-- HORIZONTAL TRACK -->
+    <div class="horizontal-slider-track" id="sliderTrack">
+
+        <!-- ============================================================
+             SLIDE 1: OVERVIEW & QUICK SEARCH
+             ============================================================ -->
+        <section class="h-slide" id="slide-0" data-index="0">
+            <div class="h-slide-inner">
+                <div class="hero-badge">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Campus Property Recovery Network</span>
+                </div>
+
+                <h1 class="hero-title">
+                    Lost something on campus?<br>
+                    <span>We'll help you get it back.</span>
+                </h1>
+
+                <p class="hero-subtitle">
+                    The university's centralized portal for reporting, tracking, and safely recovering lost belongings across all academic blocks, libraries, and campus facilities.
+                </p>
+
+                <!-- Quick Search Bar -->
+                <form method="GET" action="{{ url_for('search') }}" class="hero-search-bar">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input 
+                        type="text" 
+                        name="search" 
+                        placeholder="Search by item name, category (e.g. Laptop, Books), or location..."
+                    >
+                    <button type="submit" class="hero-search-btn">
+                        Search Items
+                    </button>
+                </form>
+
+                <!-- Flow Actions -->
+                <div class="slide-flow-actions">
+                    <a href="{{ url_for('report_lost') }}" class="btn-danger">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <span>Report Lost Item</span>
+                    </a>
+                    <button type="button" class="button" onclick="goToSlide(1)">
+                        <span>View Live Statistics</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ============================================================
+             SLIDE 2: LIVE STATISTICS & RECOVERY METRICS
+             ============================================================ -->
+        <section class="h-slide" id="slide-1" data-index="1">
+            <div class="h-slide-inner">
+                <div class="slide-header-wrap">
+                    <div class="slide-badge">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>Live Property Metrics</span>
+                    </div>
+                    <h2>Campus Recovery Statistics</h2>
+                    <p>Real-time incident records maintained by campus security desks, student affairs, and facility offices.</p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid" style="margin-top: 0; width: 100%;">
+                    <!-- Lost Items Stat -->
+                    <div class="stat-card lost">
+                        <div class="stat-header">
+                            <div class="stat-icon-wrapper">
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                            </div>
+                            <span class="stat-badge">Active Inquiries</span>
+                        </div>
+                        <div class="stat-body">
+                            <div class="stat-value">{{ lost_count }}</div>
+                            <div class="stat-label">Active Lost Reports</div>
+                        </div>
+                        <div class="stat-footer">
+                            <span class="stat-pulse-dot"></span>
+                            <span>Currently sought by students</span>
+                        </div>
+                    </div>
+
+                    <!-- Found Items Stat -->
+                    <div class="stat-card found">
+                        <div class="stat-header">
+                            <div class="stat-icon-wrapper">
+                                <i class="fa-solid fa-box-archive"></i>
+                            </div>
+                            <span class="stat-badge">Ready To Claim</span>
+                        </div>
+                        <div class="stat-body">
+                            <div class="stat-value">{{ found_count }}</div>
+                            <div class="stat-label">Available Found Items</div>
+                        </div>
+                        <div class="stat-footer">
+                            <span class="stat-pulse-dot"></span>
+                            <span>Secured at campus desks</span>
+                        </div>
+                    </div>
+
+                    <!-- Pending Claims Stat -->
+                    <div class="stat-card claim">
+                        <div class="stat-header">
+                            <div class="stat-icon-wrapper">
+                                <i class="fa-solid fa-clipboard-check"></i>
+                            </div>
+                            <span class="stat-badge">Under Review</span>
+                        </div>
+                        <div class="stat-body">
+                            <div class="stat-value">{{ claim_count }}</div>
+                            <div class="stat-label">Pending Claims</div>
+                        </div>
+                        <div class="stat-footer">
+                            <span class="stat-pulse-dot"></span>
+                            <span>Awaiting security approval</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flow Actions -->
+                <div class="slide-flow-actions">
+                    <button type="button" class="btn-secondary" onclick="goToSlide(0)">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Back: Overview</span>
+                    </button>
+                    <button type="button" class="button" onclick="goToSlide(2)">
+                        <span>Next: Service Portals</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ============================================================
+             SLIDE 3: CAMPUS SERVICES & ACTION PORTALS
+             ============================================================ -->
+        <section class="h-slide" id="slide-2" data-index="2">
+            <div class="h-slide-inner">
+                <div class="slide-header-wrap">
+                    <div class="slide-badge">
+                        <i class="fa-solid fa-grid-2"></i>
+                        <span>Student &amp; Faculty Services</span>
+                    </div>
+                    <h2>Campus Action Portals</h2>
+                    <p>Select a service to file an incident report, browse recovered items, or claim your belongings.</p>
+                </div>
+
+                <div class="actions-grid" style="width: 100%; margin-bottom: 0;">
+                    <!-- 1. Report Lost Item -->
+                    <a href="{{ url_for('report_lost') }}" class="action-card card-lost">
+                        <div>
+                            <div class="action-icon-pill">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+                            <h3 class="action-title">Report Lost Item</h3>
+                            <p class="action-desc">
+                                Misplaced an item? Log an incident so campus security can notify you.
+                            </p>
+                        </div>
+                        <div class="action-link-btn">
+                            <span>File Lost Report</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </a>
+
+                    <!-- 2. Report Found Item -->
+                    <a href="{{ url_for('report_found') }}" class="action-card card-found">
+                        <div>
+                            <div class="action-icon-pill">
+                                <i class="fa-solid fa-hand-holding-heart"></i>
+                            </div>
+                            <h3 class="action-title">Report Found Item</h3>
+                            <p class="action-desc">
+                                Spotted unattended belongings? Turn them into the registry.
+                            </p>
+                        </div>
+                        <div class="action-link-btn">
+                            <span>File Found Report</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </a>
+
+                    <!-- 3. Search Found Items -->
+                    <a href="{{ url_for('search') }}" class="action-card card-search">
+                        <div>
+                            <div class="action-icon-pill">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </div>
+                            <h3 class="action-title">Search Found Registry</h3>
+                            <p class="action-desc">
+                                Browse recovered items cataloged by category and location.
+                            </p>
+                        </div>
+                        <div class="action-link-btn">
+                            <span>Search Catalog</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </a>
+
+                    <!-- 4. Submit Claim -->
+                    <a href="{{ url_for('submit_claim') }}" class="action-card card-claim">
+                        <div>
+                            <div class="action-icon-pill">
+                                <i class="fa-solid fa-id-card-clip"></i>
+                            </div>
+                            <h3 class="action-title">Submit a Claim</h3>
+                            <p class="action-desc">
+                                Found your item in the registry? Submit an ownership claim.
+                            </p>
+                        </div>
+                        <div class="action-link-btn">
+                            <span>Initiate Claim</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </a>
+
+                    <!-- 5. Admin Verification -->
+                    <a href="{{ url_for('admin') }}" class="action-card card-admin">
+                        <div>
+                            <div class="action-icon-pill">
+                                <i class="fa-solid fa-user-shield"></i>
+                            </div>
+                            <h3 class="action-title">Admin Verification</h3>
+                            <p class="action-desc">
+                                Security officers review and verify student ownership claims.
+                            </p>
+                        </div>
+                        <div class="action-link-btn">
+                            <span>Access Portal</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Flow Actions -->
+                <div class="slide-flow-actions">
+                    <button type="button" class="btn-secondary" onclick="goToSlide(1)">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Back: Metrics</span>
+                    </button>
+                    <button type="button" class="button" onclick="goToSlide(3)">
+                        <span>Next: Recovery Guide</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ============================================================
+             SLIDE 4: RECOVERY GUIDE & CAMPUS PROPERTY OFFICE
+             ============================================================ -->
+        <section class="h-slide" id="slide-3" data-index="3">
+            <div class="h-slide-inner">
+                <div class="slide-header-wrap">
+                    <div class="slide-badge">
+                        <i class="fa-solid fa-circle-question"></i>
+                        <span>How It Works</span>
+                    </div>
+                    <h2>Campus Recovery Protocol</h2>
+                    <p>A simple 3-step security process designed to return misplaced property safely.</p>
+                </div>
+
+                <!-- 3 Steps -->
+                <div class="steps-grid" style="margin-top: 0; width: 100%; margin-bottom: 2rem;">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <h3 class="step-title">Log or Discover</h3>
+                        <p class="step-text">
+                            File a lost report with identifying marks, or browse items handed in across campus facilities.
+                        </p>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <h3 class="step-title">Cross-Verification</h3>
+                        <p class="step-text">
+                            Items are cross-referenced by location, date, category, and student registration records.
+                        </p>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <h3 class="step-title">Safe Return</h3>
+                        <p class="step-text">
+                            Campus security confirms student credentials and physically hands over the verified item.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Property Desk Info Card -->
+                <div class="info-notice" style="width: 100%; margin-bottom: 1.5rem; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <i class="fa-solid fa-building-shield" style="font-size: 1.75rem;"></i>
+                        <div>
+                            <strong style="color: #ffffff; display: block;">Central Campus Property Office</strong>
+                            <span>Ground Floor, Student Services Center &bull; Mon–Fri: 08:30 AM–05:30 PM &bull; Ext. 2400</span>
+                        </div>
+                    </div>
+                    <div class="footer-status-pill">
+                        <span class="status-indicator-dot"></span>
+                        <span>MySQL DB Active</span>
+                    </div>
+                </div>
+
+                <!-- Flow Actions -->
+                <div class="slide-flow-actions">
+                    <button type="button" class="btn-secondary" onclick="goToSlide(2)">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Back: Services</span>
+                    </button>
+                    <button type="button" class="button" onclick="goToSlide(0)">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>Back to Start</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- BOTTOM FLOATING PAGINATION BAR -->
+    <nav class="slider-pagination" aria-label="Slide Pagination">
+        <button class="slide-dot active" data-target="0" onclick="goToSlide(0)">
+            <span>1</span> Overview
+        </button>
+        <button class="slide-dot" data-target="1" onclick="goToSlide(1)">
+            <span>2</span> Metrics
+        </button>
+        <button class="slide-dot" data-target="2" onclick="goToSlide(2)">
+            <span>3</span> Services
+        </button>
+        <button class="slide-dot" data-target="3" onclick="goToSlide(3)">
+            <span>4</span> Office Guide
+        </button>
+    </nav>
+
+</div>
+{% endblock %}
+
+{# Suppress the outer vertical footer on the dashboard so the horizontal slider occupies 100% viewport cleanly #}
+{% block footer %}{% endblock %}
+
+{% block scripts %}
+<script>
+    const sliderTrack = document.getElementById('sliderTrack');
+    const slides = document.querySelectorAll('.h-slide');
+    const dots = document.querySelectorAll('.slide-dot');
+    const prevBtn = document.getElementById('sliderPrev');
+    const nextBtn = document.getElementById('sliderNext');
+    let currentIndex = 0;
+    const totalSlides = slides.length;
+
+    function goToSlide(index) {
+        if (index < 0) index = 0;
+        if (index >= totalSlides) index = totalSlides - 1;
+        currentIndex = index;
+        
+        slides[index].scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'start'
+        });
+
+        updateControls(index);
+    }
+
+    function updateControls(index) {
+        dots.forEach((dot, idx) => {
+            if (idx === index) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
+
+        if (prevBtn) prevBtn.style.opacity = index === 0 ? '0.35' : '1';
+        if (nextBtn) nextBtn.style.opacity = index === totalSlides - 1 ? '0.35' : '1';
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
+    }
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => goToSlide(currentIndex + 1));
+    }
+
+    // Keyboard Arrow Keys (Left / Right)
+    window.addEventListener('keydown', (e) => {
+        // Do not intercept if user is typing in an input field
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+            return;
+        }
+        if (e.key === 'ArrowRight') {
+            goToSlide(currentIndex + 1);
+        } else if (e.key === 'ArrowLeft') {
+            goToSlide(currentIndex - 1);
+        }
+    });
+
+    // Mouse Wheel Mapping: scroll wheel down slides horizontally right, wheel up slides left!
+    let wheelDebounce = false;
+    sliderTrack.addEventListener('wheel', (e) => {
+        if (wheelDebounce) return;
+        if (Math.abs(e.deltaY) > 25) {
+            e.preventDefault();
+            wheelDebounce = true;
+            if (e.deltaY > 0) {
+                goToSlide(currentIndex + 1);
+            } else {
+                goToSlide(currentIndex - 1);
+            }
+            setTimeout(() => { wheelDebounce = false; }, 600);
+        }
+    }, { passive: false });
+
+    // Track scroll observer for touch swipe synchronization
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+                const idx = parseInt(entry.target.getAttribute('data-index'), 10);
+                if (!isNaN(idx)) {
+                    currentIndex = idx;
+                    updateControls(idx);
+                }
+            }
+        });
+    }, {
+        root: sliderTrack,
+        threshold: 0.5
+    });
+
+    slides.forEach(slide => observer.observe(slide));
+    updateControls(0);
+</script>
+{% endblock %}
